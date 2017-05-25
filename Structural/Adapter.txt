@@ -1,0 +1,73 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PatternDemo
+{
+    ///参考：http://www.cnblogs.com/zhili/p/AdapterPattern.html
+    ///
+    /// 本demo 只演示对象的适配
+   
+    /// 
+    /// 使用场景： 适配器模式用来解决现有对象与客户端期待接口不一致的问题
+    /// 优点：可以在不修改原有代码的基础上来复用现有类，很好地符合 “开闭原则”
+    /// 
+    /// </summary>
+    class Program
+    {
+        static void Main(string[] args)
+        {
+
+            // 现在客户端 通过 适配器类 调用 B类型机票政策
+            AAirPolicy apolicy = new PolicyAdapter();
+            apolicy.ARequest();
+            Console.ReadLine();
+            Console.Read();
+        }
+    }
+
+    /// <summary>
+    /// A类型机票政策
+    /// </summary>
+    public class AAirPolicy
+    {
+        // 客户端调用的方法
+        public virtual void ARequest()
+        {
+            // 可以把一般实现放在这里
+            Console.WriteLine("我是 A类型机票政策");
+        }
+    }
+
+    /// <summary>
+    ///B类型机票政策
+    /// </summary>
+    public class BAirPolciy
+    {
+        public void BRequest()
+        {
+            Console.WriteLine("我是B类型机票政策");
+        }
+    }
+
+    /// <summary>
+    /// 适配器类，这里适配器类没有 继承BAirPolicy类或者 继承BAirPolciy 接口，
+    /// 而是引用了BAirPolciy 对象的实例，所以是对象的适配器模式的实现
+    /// </summary>
+    public class PolicyAdapter : AAirPolicy
+    {
+        // 引用B类型的实例,从而将客户端与B类型联系起来
+        public BAirPolciy bpolicy = new BAirPolciy();
+
+        /// <summary>
+        /// 实现A类型接口方法Request
+        /// </summary>
+        public override void ARequest()
+        {
+            bpolicy.BRequest();
+            //base.ARequest();
+        }
+    }
+}

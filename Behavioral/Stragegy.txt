@@ -1,0 +1,84 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PatternDemo
+{
+    ///参考：http://www.cnblogs.com/zhili/p/StragetyPattern.html
+    ///策略的意思就是方法，所以也就是对方法的抽象
+    /// <summary>
+    /// 策略模式是针对一组算法，将每个算法封装到具有公共接口的独立的类中，从而使它们可以相互替换。策略模式使得算法可以在不影响到客户端的情况下发生变化。
+    /// 用一句话慨括策略模式就是——“将每个算法封装到不同的策略类中，使得它们可以互换”。
+    /// 
+    /// 
+    /// 使用场景： 一个系统动态的在几个算法中选择一个，这些算法可以包装到一个一个的具体类(DiscountStrategy,NormalStrategy)中，并提供统一的接口（Getprice()）
+    /// 优点：易于扩展，新增一个策略具体类即可；避免 多个if else 多重语句的选择，体现面向对象概念。
+    /// 缺点：客户端知道自己调用哪个类，可以引入ico的使用，可能会产生很多策略具体类
+    /// </summary>
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // 折扣物品
+            ContextStragety context = new ContextStragety(new DiscountStrategy());
+            Console.WriteLine("折扣物品价格为：{0}", context.GetPrice(200.00));
+
+            // 正常物品
+            context = new ContextStragety(new NormalStrategy());
+            Console.WriteLine("正常物品价格为：{0}", context.GetPrice(150.00));
+
+            Console.Read();
+        }
+    }
+
+    // 所有物品的计算策略
+    //这是一个抽象角色，通常由一个接口或抽象类来实现。此角色给出所有具体策略类所需实现的接口。
+    public interface IGoodsStragety
+    {
+        double Calculate(double price);
+    }
+
+
+    // 折扣物品（8折）
+    /// <summary>
+    ///包装了相关算法或行为。
+    /// </summary>
+    public class DiscountStrategy : IGoodsStragety
+    {
+        public double Calculate(double price)
+        {
+            return price * 0.8;
+        }
+    }
+
+    // 正常物品(大于100 打9折，否则 正常价)
+    /// <summary>
+    /// 包装了相关算法或行为。
+    /// </summary>
+    public class NormalStrategy : IGoodsStragety
+    {
+        public double Calculate(double price)
+        {
+            return (price - 100) > 0 ? (price-5) * 0.9 : price;
+        }
+    }
+
+    /// <summary>
+    /// 承担着环境角色
+    /// </summary>
+    public class ContextStragety
+    {
+        private IGoodsStragety  mystragety;
+        public ContextStragety(IGoodsStragety strategy)
+        {
+            this.mystragety = strategy;
+        }
+
+        public double GetPrice(double price)
+        {
+            return mystragety.Calculate(price);
+        }
+    }
+}
