@@ -1,0 +1,151 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PatternDemo
+{
+
+    /// 简单工厂模式/工厂模式/抽象工厂 参考：http://www.cnblogs.com/zhili/p/AbstractFactory.html
+    /// dmeo 演示工厂模式
+
+    /// 
+    /// 简单工厂使用场景：当工厂类负责创建的对象比较少时可以考虑使用简单工厂模式
+    /// 优点：降低直接使用new对象耦合，工程类封装了这部分代码，
+    /// 缺点：增加新的对象时，增加条件语句判断
+    /// 
+    /// 工厂模式： 通过面向对象编程中的多态性来将对象的创建延迟到具体工厂中，从而解决了简单工厂模式中存在的问题，也很好地符合了开放封闭原则（即对扩展开发，对修改封闭）
+    /// 
+    /// 
+    /// 
+    /// 抽象工厂模式：提供一个创建产品的接口来负责创建相关或依赖的对象，而不具体明确指定具体类
+    /// 抽象工厂对于系列产品的变化支持"开放——封闭"原则（指的是要求系统对扩展开放，对修改封闭），扩展起来非常简便，但是，抽象工厂对于添加新产品这种情况就不支持 "开放——封闭"原则，这也是抽象工厂的缺点所在
+    /// </summary>
+    class Program
+    {
+        static void Main(string[] args)
+        {
+
+            //国内
+            InLandOrderFactory inlandFac = new InLandOrderFactory();
+            OrderBase inlandOrder = inlandFac.CreateEntity();
+            Order inOrder = new Order();
+            inlandOrder.CreateOrder(inOrder);
+
+            Console.WriteLine($"国内机票 id:{inOrder.Id},title:{inOrder.Title},creator:{inOrder.Creator},creationTime:{inOrder.CreationTime}");
+
+            //国际
+
+            OutBoundOrderFactory outlandFac = new OutBoundOrderFactory();
+            OrderBase outlandOrder = outlandFac.CreateEntity();
+            Order outOrder = new Order();
+            outlandOrder.CreateOrder(outOrder);
+            Console.WriteLine($"国际机票 id:{outOrder.Id},title:{outOrder.Title},creator:{outOrder.Creator},creationTime:{outOrder.CreationTime}");
+            Console.ReadKey();
+        }
+    }
+
+
+    public abstract class OrderBase
+    {
+        //abstract 完全放在子类去实现
+        // public abstract void CreateOrder();
+        //virtual 公共部分放在基类去处理
+        public virtual Order CreateOrder(Order order)
+        {
+            //公共的部分可以在这里实现
+            //例如：创建人 创建时间等
+            order.Creator = "tom";
+            order.CreationTime = DateTime.Now;
+
+            //todo调用api，新增到db，返回实体
+
+            return order;
+        }
+    }
+
+
+    /// <summary>
+    /// 国内机票
+    /// </summary>
+    public class InLandOrder : OrderBase
+    {
+
+        public override Order CreateOrder(Order order)
+        {
+            ///Inland
+            ///
+            order.Type = (int)OrderType.Inland;
+
+            order.Title = "国内机票";
+            return base.CreateOrder(order);
+        }
+    }
+    /// <summary>
+    /// 国内机票的工厂类
+    /// </summary>
+    public class InLandOrderFactory : OrderFactory
+    {
+
+        public override OrderBase CreateEntity()
+        {
+            return new InLandOrder();
+        }
+    }
+
+    /// <summary>
+    ///国际机票
+    /// </summary>
+    public class OutBoundOrder : OrderBase
+    {
+        public override Order CreateOrder(Order order)
+        {
+
+            order.Type = (int)OrderType.OutBound;
+            order.Title = "国际机票";
+
+            return base.CreateOrder(order);
+
+        }
+    }
+    /// <summary>
+    /// 国际机票的工厂类
+    /// </summary>
+    public class OutBoundOrderFactory : OrderFactory
+    {
+        public override OrderBase CreateEntity()
+        {
+            return new OutBoundOrder();
+        }
+    }
+
+    /// <summary>
+    /// 具体工厂必须实现的接口
+    /// </summary>
+    public abstract class OrderFactory
+    {
+        public abstract OrderBase CreateEntity();
+
+    }
+    /// <summary>
+    /// 订单分类
+    /// </summary>
+    public enum OrderType
+    {
+        Inland = 1,
+        OutBound = 2
+    }
+    /// <summary>
+    /// 订单表
+    /// </summary>
+    public class Order
+    {
+        public int Id { get; set; }
+
+        public int Type { get; set; }
+        public string Title { get; set; }
+        public string Creator { get; set; }
+        public DateTime CreationTime { get; set; }
+    }
+}
