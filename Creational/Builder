@@ -1,0 +1,107 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PatternDemo
+{
+
+
+    /// dmeo 演示建造者模式
+    ///参考：http://www.cnblogs.com/zhili/p/BuilderPattern.html
+    /// 
+    /// 简单工厂使用场景：主要是用于 分步骤来构建一个复杂的对象.
+    /// 优点：建造代码与表示代码的分离，从而降低了客户端与具体产品之间的耦合度建造者模式易于扩展，当有新的产品产生时，可以通过引入一个新的ConcreteBuilder来完成新的产品创建，    
+    /// 
+    /// </summary>
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Director director = new Director();
+            Builder b1 = new ConcreteBuilder1();
+            director.Construct(b1);  
+            b1.CreatePNR();
+            Console.ReadKey();
+        }
+    }
+
+    /// <summary>
+    /// 设置PNRInfo类
+    /// </summary>
+    public class  PNRInfo
+    {
+        public Passenger PassengerInfo { get; set; }
+        public Flight flightInfo { get; set; }
+    }
+    public class Passenger
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+    public class Flight
+    {
+        public int Id { get; set; }
+        public string DepCode { get; set; }
+        public string ArrCode { get; set; }
+    }
+
+    /// <summary>
+    /// 抽象建造者 设置一个抽象接口
+    /// </summary>
+    public abstract class Builder
+    {
+         // 乘客信息
+         public abstract void BuildPartPassenger();
+         // 航段信息
+         public abstract void BuildPartFlight();
+
+        /// <summary>
+        /// 创建pnr
+        /// </summary>
+        /// <returns></returns>
+        public abstract PNRInfo CreatePNR();
+    }
+
+    /// <summary>
+    /// 具体的创建者
+    /// </summary>
+    class ConcreteBuilder1 : Builder
+    {
+        private PNRInfo pnr = new PNRInfo();
+
+        public override void BuildPartPassenger()
+        {
+            Console.WriteLine("开始创建乘客信息。。。");
+            pnr.PassengerInfo = new Passenger { Id = 1, Name = "tom" };
+        }
+
+        public override void BuildPartFlight()
+        {
+            Console.WriteLine("开始创建航段信息。。。");
+            pnr.flightInfo = new Flight { Id = 1, DepCode = "PEK", ArrCode = "SHA" };
+        }
+
+        public override PNRInfo CreatePNR()
+        {
+
+            Console.WriteLine("完成pnr 创建完成。。。");
+            return pnr;
+        }
+    }
+    /// <summary>
+    /// 指挥创建过程类
+    /// </summary>
+    public class Director
+    {
+       
+        public void Construct(Builder builder)
+        {
+            builder.BuildPartPassenger();
+            builder.BuildPartFlight();
+        }
+    }
+
+}
+
