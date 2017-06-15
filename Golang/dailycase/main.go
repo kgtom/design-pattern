@@ -9,7 +9,7 @@ func main() {
 
 	//第一种根据客户端要实现那个实例去执行相应策略的方法
 	//cn := cash.CashNormal{}
-	//cndemo := cash.NewCashContext1(cn)
+	//cndemo := cash.NewPayContextByEntity(cn)
 	cndemo := pay.NewPayContextByEntity(pay.PayNormal{})
 	var m = cndemo.PayMoney(3.00)
 	fmt.Println("第一种方式：原价", m)
