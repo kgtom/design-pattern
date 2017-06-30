@@ -1,0 +1,66 @@
+//Facade 外观模式：
+// 为子系统中的一组接口提供一个一致的界面，此模式定义了一个高层接口，
+//demo中使用pnr信息（pnr包括：乘客、航段、价格，每一个都有单一的api，newFacade 提供了一个printAll()的api）
+
+package main
+
+import (
+	"fmt"
+)
+
+type PNRWrapper struct {
+	passenger PassengerInfo
+	flight    FlightInfo
+	price     PriceInfo
+}
+
+func (f PNRWrapper) printAll() {
+	f.passenger.print()
+	f.flight.print()
+	f.price.print()
+}
+
+type PassengerInfo struct {
+	name string //乘客姓名
+}
+
+func (p PassengerInfo) print() {
+	fmt.Println("AirInfo", p.name)
+}
+
+type FlightInfo struct {
+	flightNo string //航班号
+}
+
+func (f FlightInfo) print() {
+	fmt.Println("FlightInfo", f.flightNo)
+}
+
+type PriceInfo struct {
+	totalAmount float32
+}
+
+func (p PriceInfo) print() {
+	fmt.Println("PriceInfo", p.totalAmount)
+}
+
+func NewFacade(name string, flightNo string, price float32) *PNRWrapper {
+	return &PNRWrapper{PassengerInfo{name}, FlightInfo{flightNo}, PriceInfo{price}}
+}
+func main() {
+	fmt.Println("single api")
+
+	p := new(PassengerInfo)
+	p.name = "jim"
+	p.print()
+	fl := FlightInfo{flightNo: "MU5820"}
+	fl.print()
+
+	pr := PriceInfo{totalAmount: 1200}
+	pr.print()
+
+	fmt.Printf("newFacade api ...\n")
+	f := NewFacade("tom", "CA1801", 1500.00)
+	f.printAll()
+
+}
