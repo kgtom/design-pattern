@@ -1,0 +1,77 @@
+/*
+// template method design pattern
+*/
+
+package main
+
+import (
+	"fmt"
+)
+
+//定义模版方法的接口
+type Personer interface {
+	SetName(name string)
+	BeforeOut()
+	Out()
+}
+
+func main() {
+	var p *Person = &Person{}
+
+	p.personer = &Boy{Gender: 2, Nick: "tom"}
+	p.SetName("tom green")
+
+	p.BeforeOut()
+	p.Out()
+
+	p.personer = &Girl{Gender: 1, Nick: "jerry"}
+	p.SetName("jerry grenn")
+	p.BeforeOut()
+	p.Out()
+}
+
+//实现模板方法
+type Person struct {
+	personer Personer
+	name     string
+}
+
+func (this *Person) SetName(name string) {
+	this.name = name
+}
+
+func (this *Person) Out() {
+	//this.BeforeOut()
+	fmt.Println(this.name + " go out...")
+}
+
+func (this *Person) BeforeOut() {
+	if this.personer == nil {
+		return
+	}
+	fmt.Println("beforeout from persion")
+	this.personer.BeforeOut()
+}
+
+type Boy struct {
+	Person //匿名组合了Person结构体
+	Gender int
+	Nick   string
+}
+
+func (p *Boy) BeforeOut() {
+	fmt.Println("get up..", p.Nick, p.Gender)
+}
+
+type Girl struct {
+	Person //匿名组合了Person结构体
+	Gender int
+	Nick   string
+}
+
+func (p *Girl) BeforeOut() {
+	fmt.Println("dress up..", p.Nick, p.Gender)
+}
+
+
+//reference:https://github.com/qibin0506/go-designpattern/blob/master/%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/template.go
