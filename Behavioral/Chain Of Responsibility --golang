@@ -1,0 +1,94 @@
+/*
+ Chain Of Responsibility 职责链模式：
+        使多个对象都有机会处理请求，从而避免请求的发送者和接收者之间的耦合关系。
+        将这些对象连成一条链，并沿着这条链传递该请求，直到有一个对象处理它为止
+  责任链模式的优点：
+
+降低了请求的发送者和接收者之间的耦合。
+减少if-else,把多个条件判定分散到各个处理类中，使得代码更加清晰，责任更加明确。
+　　责任链模式缺点，如：
+
+首次找到处理对象之前，所有的条件判定都要执行一遍，当责任链过长时，可能会引起性能的问题。
+*/
+package main
+
+import (
+	"fmt"
+)
+
+// 处理接单请求接口
+type ApproveHandler interface {
+	SetNextHander(ApproveHandler)
+	HandleRequest(int) int
+}
+
+// 处理业务的结构体“基类”
+type Handler struct {
+	OrderId    int64
+	Status     int            // pm--->vp 处理
+	NextHander ApproveHandler // 下一个处理者
+}
+
+func (h *Handler) SetNextHander(a ApproveHandler) {
+	if h == nil {
+		fmt.Println("hander setnexthander err")
+	}
+	h.NextHander = a
+}
+
+// pm
+type PMHandler struct {
+	Handler
+}
+
+//pm职责
+func (c *PMHandler) HandleRequest(i int) int {
+	if c == nil {
+		fmt.Println("没有找到当前处理节点")
+	}
+
+	if i == 0 {
+		fmt.Println("pmHandle现在处理这个请求")
+		i++
+		//是否存在下一个节点
+		if c.NextHander != nil {
+			return c.NextHander.HandleRequest(i)
+		}
+	}
+	return i
+}
+
+//new pmhandler
+func NewPMHandler() *PMHandler {
+	return &PMHandler{}
+}
+
+//vp
+type VPHandler struct {
+	Handler
+}
+
+func (c *VPHandler) HandleRequest(i int) int {
+	if c == nil {
+		fmt.Println("没有发现当前处理")
+	}
+	if i == 1 {
+		fmt.Println("vpHandle现在处理这个请求")
+		if c.NextHander != nil {
+			return c.NextHander.HandleRequest(i)
+		}
+	}
+	return i
+}
+
+func NewVPHandler() *VPHandler {
+	return &VPHandler{}
+}
+func main() {
+	status := 0 //当前状态, 实际生产环境中，根据status值，判断走哪一个handler
+	pm := NewPMHandler()
+	vp := NewVPHandler()
+	pm.SetNextHander(vp)
+	pm.HandleRequest(status)
+
+}
