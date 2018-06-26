@@ -34,7 +34,9 @@
 <li>遵循开闭原则：扩展命令，不需要修改代码</li>
 </ul>
 <p><strong>代码</strong></p>
+
 ~~~go
+
 
 package main
 
@@ -114,9 +116,9 @@ func main() {
 ~~~
 
 <p><strong>多个命令模式：组合命令</strong></p>
+
 ~~~ go
 
-//命令集合
 type CommandArray struct {
 	Index int
 	cmds  []Command
@@ -142,9 +144,6 @@ func NewCommand() *CommandArray {
 
 func main() {
 
-	
-
-	//命令模式----组合命令
 	fmt.Println("-------组合命令-------")
 	s1 := NewCommand()
 	s1.AddCommandArray(OpenCommand{tv})
@@ -152,6 +151,10 @@ func main() {
 	s1.Press()
 }
 
+~~~
+
+~~~
+test
 ~~~
 
 <blockquote>
