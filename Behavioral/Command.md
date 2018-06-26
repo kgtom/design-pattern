@@ -1,7 +1,4 @@
----
 
-
----
 
 <p><strong>概念理解：</strong></p>
 <blockquote>
@@ -38,6 +35,7 @@
 </ul>
 <p><strong>代码</strong></p>
 ~~~go
+
 package main
 
 import "fmt"
@@ -113,11 +111,11 @@ func main() {
 	
 }
 
-
 ~~~
 
 <p><strong>多个命令模式：组合命令</strong></p>
-~~~go
+~~~ go
+
 //命令集合
 type CommandArray struct {
 	Index int
@@ -153,6 +151,7 @@ func main() {
 	s1.AddCommandArray(CloseCommand{tv})
 	s1.Press()
 }
+
 ~~~
 
 <blockquote>
