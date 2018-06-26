@@ -109,6 +109,7 @@
 <span class="token keyword">type</span> CommandArray <span class="token keyword">struct</span> <span class="token punctuation">{</span>
 	Index <span class="token builtin">int</span>
 	cmds  <span class="token punctuation">[</span><span class="token punctuation">]</span>Command
+	<span class="token comment">//用一个切片来保存各个命令</span>
 <span class="token punctuation">}</span>
 
 <span class="token keyword">func</span> <span class="token punctuation">(</span>c <span class="token operator">*</span>CommandArray<span class="token punctuation">)</span> <span class="token function">AddCommandArray</span><span class="token punctuation">(</span>cmd Command<span class="token punctuation">)</span> <span class="token punctuation">{</span>
