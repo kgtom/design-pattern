@@ -37,124 +37,124 @@
 <li>遵循开闭原则：扩展命令，不需要修改代码</li>
 </ul>
 <p><strong>代码</strong></p>
-<pre class=" language-go"><code class="prism  language-go"><span class="token keyword">package</span> main
+~~~go
+package main
 
-<span class="token keyword">import</span> <span class="token string">"fmt"</span>
+import "fmt"
 
-<span class="token comment">//receiver 命令接受者</span>
-<span class="token keyword">type</span> TV <span class="token keyword">struct</span> <span class="token punctuation">{</span>
-<span class="token punctuation">}</span>
+//receiver 命令接受者
+type TV struct {
+}
 
-<span class="token keyword">func</span> <span class="token punctuation">(</span>p TV<span class="token punctuation">)</span> <span class="token function">Open</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-	fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token string">"tv open"</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token punctuation">(</span>p TV<span class="token punctuation">)</span> <span class="token function">Close</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-	fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token string">"tv close"</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
+func (p TV) Open() {
+	fmt.Println("tv open")
+}
+func (p TV) Close() {
+	fmt.Println("tv close")
+}
 
-<span class="token comment">//Command 命令</span>
-<span class="token keyword">type</span> Command <span class="token keyword">interface</span> <span class="token punctuation">{</span>
-	<span class="token function">Press</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
+//Command 命令
+type Command interface {
+	Press()
+}
 
-<span class="token keyword">type</span> OpenCommand <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+type OpenCommand struct {
 	tv TV
-<span class="token punctuation">}</span>
+}
 
-<span class="token keyword">func</span> <span class="token punctuation">(</span>c OpenCommand<span class="token punctuation">)</span> <span class="token function">Press</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-	c<span class="token punctuation">.</span>tv<span class="token punctuation">.</span><span class="token function">Open</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
+func (c OpenCommand) Press() {
+	c.tv.Open()
+}
 
-<span class="token keyword">type</span> CloseCommand <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+type CloseCommand struct {
 	tv TV
-<span class="token punctuation">}</span>
+}
 
-<span class="token keyword">func</span> <span class="token punctuation">(</span>c CloseCommand<span class="token punctuation">)</span> <span class="token function">Press</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+func (c CloseCommand) Press() {
 
-	c<span class="token punctuation">.</span>tv<span class="token punctuation">.</span><span class="token function">Close</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
+	c.tv.Close()
+}
 
-<span class="token comment">//sender 发送命令</span>
-<span class="token keyword">type</span> Invoker <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+//sender 发送命令
+type Invoker struct {
 	cmd Command
-<span class="token punctuation">}</span>
+}
 
-<span class="token keyword">func</span> <span class="token punctuation">(</span>i <span class="token operator">*</span>Invoker<span class="token punctuation">)</span> <span class="token function">SetCommand</span><span class="token punctuation">(</span>cmd Command<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-	i<span class="token punctuation">.</span>cmd <span class="token operator">=</span> cmd
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token punctuation">(</span>i Invoker<span class="token punctuation">)</span> <span class="token function">Do</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-	i<span class="token punctuation">.</span>cmd<span class="token punctuation">.</span><span class="token function">Press</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-
-<span class="token keyword">func</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-
-	<span class="token comment">//Client</span>
-
-	<span class="token keyword">var</span> tv TV
-	<span class="token comment">//第一种初始化</span>
-	<span class="token comment">//s := Invoker{OpenCommand{tv}}</span>
-	<span class="token comment">//第二种初始</span>
-	s <span class="token operator">:=</span> Invoker<span class="token punctuation">{</span><span class="token punctuation">}</span>
-	s<span class="token punctuation">.</span><span class="token function">SetCommand</span><span class="token punctuation">(</span>OpenCommand<span class="token punctuation">{</span>tv<span class="token punctuation">}</span><span class="token punctuation">)</span>
-	s<span class="token punctuation">.</span><span class="token function">Do</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-
-	s<span class="token punctuation">.</span><span class="token function">SetCommand</span><span class="token punctuation">(</span>CloseCommand<span class="token punctuation">{</span>tv<span class="token punctuation">}</span><span class="token punctuation">)</span>
-	s<span class="token punctuation">.</span><span class="token function">Do</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
+func (i *Invoker) SetCommand(cmd Command) {
+	i.cmd = cmd
+}
+func (i Invoker) Do() {
+	i.cmd.Press()
+}
 
 
-</code></pre>
+func NewCommand() *CommandArray {
+	c := &CommandArray{}
+	c.cmds = make([]Command, 2)
+	return c
+}
+
+func main() {
+
+	////命令模式----单命令
+	//Client
+
+	var tv TV
+	//第一种初始化
+	//s := Invoker{OpenCommand{tv}}
+	//第二种初始
+	s := Invoker{}
+	s.SetCommand(OpenCommand{tv})
+	s.Do()
+
+	s.SetCommand(CloseCommand{tv})
+	s.Do()
+
+	
+}
+
+
+~~~
+
 <p><strong>多个命令模式：组合命令</strong></p>
-<pre class=" language-go"><code class="prism  language-go"><span class="token comment">//命令集合</span>
-<span class="token keyword">type</span> CommandArray <span class="token keyword">struct</span> <span class="token punctuation">{</span>
-	Index <span class="token builtin">int</span>
-	cmds  <span class="token punctuation">[</span><span class="token punctuation">]</span>Command
-	<span class="token comment">//用一个切片来保存各个命令</span>
-<span class="token punctuation">}</span>
+~~~go
+//命令集合
+type CommandArray struct {
+	Index int
+	cmds  []Command
+}
 
-<span class="token keyword">func</span> <span class="token punctuation">(</span>c <span class="token operator">*</span>CommandArray<span class="token punctuation">)</span> <span class="token function">AddCommandArray</span><span class="token punctuation">(</span>cmd Command<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+func (c *CommandArray) AddCommandArray(cmd Command) {
 
-	c<span class="token punctuation">.</span>cmds<span class="token punctuation">[</span>c<span class="token punctuation">.</span>Index<span class="token punctuation">]</span> <span class="token operator">=</span> cmd
-	c<span class="token punctuation">.</span>Index<span class="token operator">++</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token punctuation">(</span>c <span class="token operator">*</span>CommandArray<span class="token punctuation">)</span> <span class="token function">Press</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+	c.cmds[c.Index] = cmd
+	c.Index++
+}
+func (c *CommandArray) Press() {
 
-	<span class="token keyword">for</span> <span class="token boolean">_</span><span class="token punctuation">,</span> v <span class="token operator">:=</span> <span class="token keyword">range</span> c<span class="token punctuation">.</span>cmds <span class="token punctuation">{</span>
-		v<span class="token punctuation">.</span><span class="token function">Press</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-	<span class="token punctuation">}</span>
-<span class="token punctuation">}</span>
+	for _, v := range c.cmds {
+		v.Press()
+	}
+}
 
-<span class="token keyword">func</span> <span class="token function">NewCommand</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span>CommandArray <span class="token punctuation">{</span>
-	c <span class="token operator">:=</span> <span class="token operator">&amp;</span>CommandArray<span class="token punctuation">{</span><span class="token punctuation">}</span>
-	c<span class="token punctuation">.</span>cmds <span class="token operator">=</span> <span class="token function">make</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token punctuation">]</span>Command<span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span>
-	<span class="token keyword">return</span> c
-<span class="token punctuation">}</span>
+func NewCommand() *CommandArray {
+	c := &CommandArray{}
+	c.cmds = make([]Command, 2)
+	return c
+}
 
-<span class="token keyword">func</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+func main() {
 
-	<span class="token comment">////命令模式----单命令</span>
-	<span class="token comment">//Client</span>
+	
 
-	<span class="token keyword">var</span> tv TV
-	<span class="token comment">//第一种初始化</span>
-	<span class="token comment">//s := Invoker{OpenCommand{tv}}</span>
-	<span class="token comment">//第二种初始</span>
-	s <span class="token operator">:=</span> Invoker<span class="token punctuation">{</span><span class="token punctuation">}</span>
-	s<span class="token punctuation">.</span><span class="token function">SetCommand</span><span class="token punctuation">(</span>OpenCommand<span class="token punctuation">{</span>tv<span class="token punctuation">}</span><span class="token punctuation">)</span>
-	s<span class="token punctuation">.</span><span class="token function">Do</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+	//命令模式----组合命令
+	fmt.Println("-------组合命令-------")
+	s1 := NewCommand()
+	s1.AddCommandArray(OpenCommand{tv})
+	s1.AddCommandArray(CloseCommand{tv})
+	s1.Press()
+}
+~~~
 
-	s<span class="token punctuation">.</span><span class="token function">SetCommand</span><span class="token punctuation">(</span>CloseCommand<span class="token punctuation">{</span>tv<span class="token punctuation">}</span><span class="token punctuation">)</span>
-	s<span class="token punctuation">.</span><span class="token function">Do</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-
-	<span class="token comment">////命令模式----组合命令</span>
-	fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token string">"-------组合命令-------"</span><span class="token punctuation">)</span>
-	s1 <span class="token operator">:=</span> <span class="token function">NewCommand</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-	s1<span class="token punctuation">.</span><span class="token function">AddCommandArray</span><span class="token punctuation">(</span>OpenCommand<span class="token punctuation">{</span>tv<span class="token punctuation">}</span><span class="token punctuation">)</span>
-	s1<span class="token punctuation">.</span><span class="token function">AddCommandArray</span><span class="token punctuation">(</span>CloseCommand<span class="token punctuation">{</span>tv<span class="token punctuation">}</span><span class="token punctuation">)</span>
-	s1<span class="token punctuation">.</span><span class="token function">Press</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-
-</code></pre>
 <blockquote>
 <p>Reference:<br>
 <a href="https://blog.csdn.net/qibin0506/article/details/50812611">addr</a></p>
